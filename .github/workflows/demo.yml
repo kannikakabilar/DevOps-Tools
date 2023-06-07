@@ -1,0 +1,41 @@
+# All GitHub Action files must be located in this path: App_Repo/.github/workflows/*.yml
+
+# name the workflow like this
+name: My Demo Workflow
+
+# All workflow should have at least one GitHub Event that it should listen to so that the workflow can be triggered
+# The following workflow is triggered when a push occurs
+on: [push]
+
+jobs:
+  build:
+    # Every job must have runs-on section because the GitHub engine needs to know where to execute code
+    # We can make this declarative by saying (runs-on: ubuntu-18.04) or dynamic like below
+    # This will be executed for each value present in the 'os' array => so 3 times
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+        os: [macos-latest, windows-latest, ubuntu-18.04]
+    
+    steps:
+    - uses: actions/checkout@v1
+    
+    # The below chunk is running a pre-existing set of actions defined GitHub community
+    - name: Use Node.js ${{ matirx.node-version }}
+      # explanation for actions/setup-node@v1: There's a user/org called 'actions' in GitHub and that user has a repo called 'setup-node' in which they have actions.yml file
+      # and all the javascript files for that action - And we can reference that action because that repo is public. There's a version that we can use based on tags
+      uses: actions/setup-node@v1
+      with:
+        # This will be executed for each value present in the 'node-version' array => so a total of 9 times (3 node-versions for each of the 3 os)
+        node-version: ${{ matirx.node-version }}
+        
+    # The below chunk is running a shell script
+    - name: npm install, build, and test
+      run: |
+        npm ci
+        npm run build --if-present
+        npm test
+        
+      env:
+        CI: true

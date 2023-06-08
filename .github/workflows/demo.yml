@@ -28,7 +28,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         # This will be executed for each value present in the 'node-version' array => so a total of 9 times (3 node-versions for each of the 3 os)
-        node-version: ${{ matirx.node-version }}
+        node-version: ${{ matrix.node-version }}
         
     # The below chunk is running a shell script
     - name: npm install, build, and test

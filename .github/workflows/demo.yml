@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v1
     
     # The below chunk is running a pre-existing set of actions defined GitHub community
-    - name: Use Node.js ${{ matirx.node-version }}
+    - name: Use Node.js ${{ matrix.node-version }}
       # explanation for actions/setup-node@v1: There's a user/org called 'actions' in GitHub and that user has a repo called 'setup-node' in which they have actions.yml file
       # and all the javascript files for that action - And we can reference that action because that repo is public. There's a version that we can use based on tags
       uses: actions/setup-node@v1

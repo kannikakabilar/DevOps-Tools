@@ -1,0 +1,151 @@
+name: CI + CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  # Uncomment below to make this workflow run every 2 hours
+  # schedule:
+    # - cron: 0 0 */2 * * *
+  
+# Setting environment variables
+env:
+  # Used for EXAMPLE2
+  arg1: 100
+  arg2: 100
+  
+  # Used for EXAMPLE3
+  SONARSCANNER_RELEASE_DOWNLOADURL: https://github.com/SonarSource/sonar-scanner-msbuild/releases/download/5.3.1.36242/sonar-scanner-msbuild-5.3.1.36242-net46.zip
+  SOLUTION_PATH: PATH_OF_YOUR_SLN_FILE
+  SONAR_HOST: URL_OF_YOUR_SONARCLOUD_OR_SONARQUBE_INSTANCE
+  SONAR_PROJECT_KEY: xxx
+  SONAR_PROJECT_NAME: xxx
+  SONAR_PROJECT_VERSION: 1.2.3
+
+jobs:
+
+  # EXAMPLE1: CI + CD Workflow
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Compile
+        run: echo Hello, world!
+    
+  DeployDev:
+    name: Deploy to Dev 
+    # This job will only execute if the 'if' statement is true
+    if: github.event_name == 'pull_request'
+    needs: [Build]
+    runs-on: ubuntu-latest
+    # It will be deployed on the 'Development' environment with the given url
+    environment: 
+      name: Development
+      url: 'http://dev.myapp.com'
+    steps:
+      - name: Deploy
+        run: echo I am deploying! 
+    
+  DeployStaging:
+    name: Deploy to Staging 
+    if: github.event.ref == 'refs/heads/main'
+    needs: [Build]
+    runs-on: ubuntu-latest
+    environment: 
+      name: Staging
+      url: 'http://test.myapp.com'
+    steps:
+      - name: Deploy
+        run: echo I am deploying! 
+            
+  DeployProd:
+    name: Deploy to Production 
+    needs: [DeployStaging]
+    runs-on: ubuntu-latest
+    environment: 
+      name: Production
+      url: 'http://www.myapp.com'
+    steps:
+      - name: Deploy
+        run: echo I am deploying! 
+  
+  # EXAMPLE2: Workflow with Conditional examples
+  # Below job demonstrates conditionals, the action is only executed if the 'if' condition is true
+  conditional:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: String equality
+        run: echo Is ok
+        if: ${{ 'aaa' == 'aaa' }}
+
+      - name: String equality case
+        run: echo Is this case sensitive?
+        if:  ${{ 'aaa' == 'AAA' }}
+
+      - name: String equality never run
+        run: echo This won't run
+        if:  ${{ 'aaa' == 'bbb' }}
+      
+      - name: Numbers and vars
+        run: echo works with vars
+        if:  ${{ env.arg1 == env.arg2 }}    
+
+      - name: Null never run
+        run: echo This won't run
+        if:  ${{ null == 'bbb' }}
+        
+      - name: run this command only if scheduled
+        run: echo Hello
+        if: ${{ github.event.schedule }}
+        
+  # EXAMPLE3: Running Sonar Scan
+  sonar:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download and Unzip SonarScanner
+        run: |
+          curl -L -o sonarscanner.zip ${{ env.SONARSCANNER_RELEASE_DOWNLOADURL }}
+          Expand-Archive -Path .\sonarscanner.zip -DestinationPath .\SonarScanner -Verbose
+
+      - name: Run SonarScanner
+        run: |
+          SonarScanner.MSBuild.exe begin /k:"${{ env.SONAR_PROJECT_KEY }}" /n:"{{ env.SONAR_PROJECT_NAME }} /v:"${{ env.SONAR_PROJECT_VERSION }"" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ env.SONAR_HOST }}"
+          MSBuild.exe ${{ env.SOLUTION_PATH}} /t:Rebuild
+          SonarScanner.MSBuild.exe end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          
+  # EXAMPLE4: Open a new issue
+  issueOpen:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2.3.4 
+      
+    - name: Create an issue
+      # You may pin to the exact commit or the version.
+      uses: JasonEtco/create-an-issue@v2.4.0
+      with:
+        filename: .github/ISSUE_TEMPLATE_DEPLOYMENT.md
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ github.RUN_NUMBER }}
+        
+  # EXAMPLE5: Build and Publish a Docker image -- * Not entirely sure about this!
+  docker:
+    uses: n3wt0n/ReusableWorkflow/.github/workflows/buildAndPublishDockerImage.yml@main
+    with:
+      image_name: my-awesome-app
+      tag: $GITHUB_RUN_NUMBER
+    secrets:
+      registry_username: ${{secrets.REGISTRY_USERNAME}}
+      registry_password: ${{secrets.REGISTRY_PASSWORD}}
+  

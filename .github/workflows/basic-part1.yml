@@ -25,6 +25,8 @@ jobs:
     # Optional section below - indicating the environment
     environment: 
       name: Production
+      # you can also give the url to the production server where the code will be deployed like below
+      # url: http:<ipaddress>:<port>/
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:

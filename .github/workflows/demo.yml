@@ -4,8 +4,11 @@
 name: My Demo Workflow
 
 # All workflow should have at least one GitHub Event that it should listen to so that the workflow can be triggered
-# The following workflow is triggered when a push occurs
-on: [push]
+# The following workflow is triggered when someone pushes a change to a Java file
+on: 
+  push:
+    paths:
+      - '**.java'
 
 jobs:
   build:
@@ -43,34 +46,33 @@ jobs:
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Below is another separate example of job
 
-jobs:
   build_and_release:
-  name: Build and Release
-  runs-on: ubuntu-latest
-  steps:
-    # Step1: Checkout the code
-    # Note: Each - name: ... and uses: ... is considered as an action-step
-    - name: Checkout Code
-      uses: actions/checkout@v1.0.0
-      
-    # Step2: Build and Test
-    - name: Build and Test
-      uses: actions/build-and-test@v1.0.0
-      
-    # Step3: Release
-    # !Note: You don't want to put too much steps in a single block of action => gets hard to debug
-    - name: Create Release and Tweet
-      id: create_release
-      uses: actions/create-release@v1.0.0
-      env:
-        # Access the 'GITHUB_TOKEN' secret from the secret section of this repository and assign it to GITHUB_TOKEN here
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TWITTER_TOKEN: ${{ secrets.TWITTER_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        prerelease: false
-        upload_url: ${{ steps.create_draft_release }}
+    name: Build and Release
+    runs-on: ubuntu-latest
+    steps:
+      # Step1: Checkout the code
+      # Note: Each - name: ... and uses: ... is considered as an action-step
+      - name: Checkout Code
+        uses: actions/checkout@v1.0.0
+
+      # Step2: Build and Test
+      - name: Build and Test
+        uses: actions/build-and-test@v1.0.0
+
+      # Step3: Release
+      # !Note: You don't want to put too much steps in a single block of action => gets hard to debug
+      - name: Create Release and Tweet
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          # Access the 'GITHUB_TOKEN' secret from the secret section of this repository and assign it to GITHUB_TOKEN here
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TWITTER_TOKEN: ${{ secrets.TWITTER_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          prerelease: false
+          upload_url: ${{ steps.create_draft_release }}
   
   
   

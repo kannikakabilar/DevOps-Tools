@@ -33,6 +33,8 @@ jobs:
 
     - name: Build and Push Docker Image
       uses: mr-smithers-excellent/docker-build-push@v4
+      
+      # 'with' is used to set a map of the input parameters defined for the action to execute.
       with:
         image: kannika99/kannika-repo
         registry: docker.io

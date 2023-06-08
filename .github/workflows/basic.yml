@@ -21,9 +21,14 @@ jobs:
 
     # The type of runner that the job, "build"  will run on 
     runs-on: ubuntu-latest
+    
+    # Optional section below - indicating the environment
+    environment: 
+      name: Production
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # The '-' groups chunks of code as a sub-step/action
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 

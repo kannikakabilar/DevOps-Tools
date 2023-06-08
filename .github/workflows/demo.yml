@@ -39,3 +39,40 @@ jobs:
         
       env:
         CI: true
+        
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Below is another separate example of jobs
+
+jobs:
+  build_and_release:
+  name: Build and Release
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v1.0.0
+    - name: Build and Test
+      uses: actions/build-and-test@v1.0.0
+    - name: Create Release and Tweet
+      id: create_release
+      uses: actions/create-release@v1.0.0
+      env:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

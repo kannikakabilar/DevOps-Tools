@@ -1,7 +1,7 @@
 # All GitHub Action files must be located in this path: App_Repo/.github/workflows/*.yml
 
 # name the workflow like this
-name: My Demo Workflow
+name: My Demo Workflow - Part 2
 
 # All workflow should have at least one GitHub Event that it should listen to so that the workflow can be triggered
 # The following workflow is triggered when someone pushes a change to a Java file

@@ -1,10 +1,6 @@
 name: More Examples
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
   # Uncomment below to make this workflow run every 2 hours
   # schedule:

@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Basic-Part1
+name: Basic - Part 1
 
 # Controls when the workflow will run | 'on' section states the GitHub events of when this workflow will be triggered
 on:

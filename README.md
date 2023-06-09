@@ -1,5 +1,5 @@
 # GitHub-Actions
-This repo is used to the features of GitHub Actions
+This repo is used to design various GitHub Action workflows. Go to .github/workflows to view the all workflows.
 
 ##### build the project
 

@@ -1,4 +1,4 @@
-name: CI + CD
+name: More Examples
 
 on:
   push:

@@ -112,15 +112,15 @@ Now go to browser and type: [ip_addr_found_above]:30100
 # GitHub-Actions
 This folder is used to learn and design various GitHub Action workflows using a sample Gradle-Java app. Go to .github/workflows to view all the workflows.
 
-##### build the project
+- Building the Gradle project
 
     ./gradlew build
 
-##### build Docker image called java-app. Execute from root
+- build Docker image called java-app. Execute from root
 
     docker build -t java-app .
     
-##### push image to repo 
+- push image to repo 
 
     docker tag java-app demo-app:java-1.0
 
@@ -129,7 +129,7 @@ This folder is used for learning about Ansible and how to design Ansible Playboo
 
 # Learning-Jenkins
 This folder is used for learning about how to prepare Jenkinsfile and how to work with Jenkins
-## Build the Jenkins BlueOcean Docker Image
+- Build the Jenkins BlueOcean Docker Image
 ```
 docker build -t myjenkins-blueocean:2.332.3-1 .
 ```
@@ -139,13 +139,13 @@ IF you are having problems building the image yourself, you can pull from my reg
 docker pull devopsjourney1/jenkins-blueocean:2.332.3-1 && docker tag devopsjourney1/jenkins-blueocean:2.332.3-1 myjenkins-blueocean:2.332.3-1
 ```
 
-## Create the network 'jenkins'
+- Create the network 'jenkins'
 ```
 docker network create jenkins
 ```
 
-## Run the Container
-### MacOS / Linux
+### Run the Container
+- MacOS / Linux
 ```
 docker run --name jenkins-blueocean --restart=on-failure --detach \
   --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
@@ -156,7 +156,7 @@ docker run --name jenkins-blueocean --restart=on-failure --detach \
   myjenkins-blueocean:2.332.3-1
 ```
 
-### Windows
+- Windows
 ```
 docker run --name jenkins-blueocean --restart=on-failure --detach `
   --network jenkins --env DOCKER_HOST=tcp://docker:2376 `
@@ -167,21 +167,21 @@ docker run --name jenkins-blueocean --restart=on-failure --detach `
 ```
 
 
-## Get the Password
+- Get the Password
 ```
 docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
-## Connect to the Jenkins
+- Connect to the Jenkins
 ```
 https://localhost:8080/
 ```
 
-## Installation Reference:
+- Installation Reference:
 https://www.jenkins.io/doc/book/installing/docker/
 
 
-## alpine/socat container to forward traffic from Jenkins to Docker Desktop on Host Machine
+- alpine/socat container to forward traffic from Jenkins to Docker Desktop on Host Machine
 
 https://stackoverflow.com/questions/47709208/how-to-find-docker-host-uri-to-be-used-in-jenkins-docker-plugin
 ```
@@ -192,7 +192,7 @@ From the output of above command, execute below command to get the ip address
 docker inspect <container_name>
 ```
 
-## Use Jenkins Python Agent
+- Use Jenkins Python Agent
 ```
 docker pull devopsjourney1/myjenkinsagents:python
 ```

@@ -1,0 +1,46 @@
+// Everything is in the pipeline section
+pipeline {
+// Select the agent that you want this job to run on
+    agent { 
+        node {
+            label 'docker-agent-python'
+            }
+      }
+    triggers {
+        // run every minute
+        pollSCM '* * * * *'
+    }
+    // format: stages > stage > steps
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building.."
+                sh '''
+                echo "doing build stuff.."
+                cd myapp
+                pip install -r requirements.txt
+                '''
+            }
+        }
+        // If one stage fails, then the following stage will also fail without executing
+        stage('Test') {
+            steps {
+                echo "Testing.."
+                sh '''
+                echo "doing test stuff.."
+                cd myapp
+                python3 hello.py
+                python3 hello.py --name=Kannika
+                '''
+            }
+        }
+        stage('Deliver') {
+            steps {
+                echo 'Deliver....'
+                sh '''
+                echo "doing delivery stuff.."
+                '''
+            }
+        }
+    }
+}

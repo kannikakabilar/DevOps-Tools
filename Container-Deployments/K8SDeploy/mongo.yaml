@@ -1,0 +1,75 @@
+# Deployment & Service in 1 file, because they belong together
+apiVersion: apps/v1
+kind: Deployment
+# This section of the yaml file is used to create a deployment
+# There are 2 main parts metadata and spec (specification)
+metadata:
+  name: mongo-deployment
+  labels:
+    app: mongo
+spec:
+  # Replicas indicaate how many Pods you want to create
+  replicas: 1
+  # !Remember: for multiple database pods, we need to create it in a StatefulSet NOT a Deployment
+  selector:
+  # This selector and matchLabels section helps us identify which pods belong to which Deployment
+    matchLabels:
+      app: mongo
+  # The pods created with below template will belong to this above Deployment
+  template:
+  # Template is a configuration for Pod because deployment manages Pod.
+  # Template has its own metadata and spec sections
+    metadata:
+      labels:
+        app: mongo
+    spec:
+    # This whole spec is used to create pods with mongodb image version/tag:5.0 from DockerHub
+      containers:
+      # Container section is usually inside the spec section of the template
+      # It will contain info like which image it needs to pull from and which port to use
+      - name: mongodb
+      # The name we give for the container
+        image: mongo:5.0
+        # The image comes from DockerHub and its tag
+        ports:
+        - containerPort: 27017
+        # This is the port where the container will listen (can be found at DockerHub documentation)
+        env:
+        # env used for setting envirinment variable names and values
+        - name: MONGO_INITDB_ROOT_USERNAME
+        # non-confidential data can be given with just value like below
+        #  value:
+        # Referencing Secret
+          valueFrom:
+            secretKeyRef:
+            # Below values are directly from mongo-secret.yaml
+              name: mongo-secret
+              key: mongo-user
+        # Similar to above but now we set value of mongodb pswd
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password
+
+# Multiple yaml configurations within 1 file can be separated using 3-dashes like below
+---
+
+apiVersion: v1
+kind: Service
+# This section of the yaml file is used to create a service
+metadata:
+  # The below is the name of the end-point given in mongo-config.yaml
+  name: mongo-service
+spec:
+  selector:
+  # Selector in service forwards the requests (that it has been receiving) to the selected pods
+    app: mongo
+  ports:
+    - protocol: TCP
+      port: 27017
+      # Above port number can be anything we choose (but standard to make it the same as target port)
+      targetPort: 27017
+      # Target port should always be the same as the container port indicated above in Deployment section
+      # because thats how service will forward the receiving requests to pods
+  

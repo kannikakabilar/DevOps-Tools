@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+# kind indicates the type of yaml file that we are creating
+metadata:
+  name: mongo-config
+  # metadata / name is an arbitrary name (can be the same as file name)
+data:
+# Actual data contents key-value pairs go here
+  mongo-url: mongo-service
+  # This will be the Service name of MongoDB which will be the endpoint of MongoDB

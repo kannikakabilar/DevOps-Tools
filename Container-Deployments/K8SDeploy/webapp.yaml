@@ -1,0 +1,82 @@
+# This file contains the basic configuration for Deployment and Service for any application in K8s cluster
+# Deployment & Service in 1 yaml file, because they belong together
+apiVersion: apps/v1
+kind: Deployment
+# This section of the yaml file is used to create a deployment
+# There are 2 main parts metadata and spec (specification)
+metadata:
+  name: webapp-deployment
+  labels:
+    app: webapp
+spec:
+  # Replicas indicaate how many Pods you want to create
+  replicas: 1
+  selector:
+  # This selector and matchLabels section helps us identify which pods belong to which Deployment
+    matchLabels:
+      app: webapp
+  # The pods created with below template will belong to this above Deployment
+  template:
+  # Template is a configuration for Pod because deployment manages Pod.
+  # Template has its own metadata and spec sections
+    metadata:
+      labels:
+        app: webapp
+    spec:
+    # This whole spec is used to create pods with the webapp image from DockerHub
+      containers:
+      # Container section is usually inside the spec section of the template
+      # It will contain info like which image it needs to pull from and which port to use
+      - name: webapp
+      # The name we give for the container
+        image: nanajanashia/k8s-demo-app:v1.0
+        # The image comes from DockerHub and its tag
+        ports:
+        - containerPort: 3000
+        # Nodejs app that listens on port 3000
+        env:
+        # These env variables are created based on what the nodejs webapp requires and how the values are name and accessed from the webapp
+        - name: USER_NAME
+          valueFrom:
+              secretKeyRef:
+                name: mongo-secret
+                key: mongo-user
+        - name: USER_PWD
+          valueFrom:
+              secretKeyRef:
+                name: mongo-secret
+                key: mongo-password
+        # Below is for connecting mongodb endpoint
+        - name: DB_URL
+          valueFrom:
+              configMapKeyRef:
+                name: mongo-config
+                key: mongo-url
+
+# Multiple yaml configurations within 1 file can be separated using 3-dashes like below
+---
+
+apiVersion: v1
+kind: Service
+# This section of the yaml file is used to create a service
+metadata:
+  # The below is the name of the end-point 
+  name: webapp-service
+spec:
+  # Below type section line makes it an external service
+  # Without the type section line, it is by default an internal service set as (type: ClusterIP)
+  type: NodePort
+  selector:
+  # Selector in service forwards the requests (that it has been receiving) to the selected pods
+    app: webapp
+  ports:
+    - protocol: TCP
+      port: 3000
+      # Above port number can be anything we choose (but standard to make it the same as target port)
+      targetPort: 3000
+      # Target port should always be the same as the container port indicated above in Deployment section
+      # because thats how service will forward the receiving requests to pods
+      nodePort: 30100
+      # nodePort needed for external service (must be between 30000 to 32767)
+      # It exposes the Service on each Node's IP at a static port (which can then be accessed from external browser through http://<NodeIP>:<NodePort>)
+  

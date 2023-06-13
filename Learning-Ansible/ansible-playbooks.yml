@@ -1,0 +1,79 @@
+# This is an example of an Ansible Playbook (a Playbook contains 1 or more Plays)
+
+# The chunk of code that are indented below hosts section is considered 1 Play
+
+# We are indicating which set of machines the set of tasks should execute
+# The value of databases is a list of ip_adresses which are listed in Ansible Inventory called hosts file
+- hosts: databases
+  # We also need to provide the user account that will be used to login to theses hosts
+  remote_user: root
+  
+  # For values that are repeated constantly, we can set them as vars, so that if we want to change the values, we only need to change here
+  vars:
+    tablename: foo
+    tableowner: someuser
+  
+  # The sequence of grouped tasks => A configuration. Each task has a descriptive_name, base_module, and arguments
+  tasks:
+    - name: Rename table foo to bar  # descriptive_name
+      postgresql_table:              # base_module
+        table: {{ tablename }}       # argument (value retireved from vars)
+        rename: bar                  # argument
+
+    - name: Set owner to some user   # descriptive_name
+      postgresql_table:              # base_module
+        table: {{ tablename }}       # argument (value retireved from vars)
+        owner: {{ tableowner }}      # argument (value retireved from vars)
+
+    - name: Truncate table foo       # descriptive_name
+      postgresql_table:              # base_module
+        table: {{ tablename }}       # argument (value retireved from vars)
+        truncate: yes                # argument (yes/no, on/off, true/false all are boolean yaml values)
+
+# The chunk of code that are indented below this hosts section is considered as another Play
+- hosts: webserver
+  remote_user: root
+  
+  tasks:
+    # '-' is used to indicate that it is a list (a list of tasks, indentation not required for '-') Below chunk is first item in list
+    - name: Create directory for nginx
+      file: 
+        # In YAML, you don't need to use quotes unles using slashes or special characters
+        path: "path/to/nginx/dir"
+        state: directory  
+
+    # Below chunk is second item in list
+    - name: Install nginx latest version
+      yum: 
+        name: nginx
+        state: latest    
+
+    # Below chunk is third item in list
+    - name: Start nginx
+      service: 
+        name: nginx
+        state: started    
+
+    # Create a Jenkins job using basic authentication
+    - jenkins_job:
+      config: "{{ lookup('file', 'templates/test.xml') }}"
+      name: test
+      password: admin
+      url: http://localhost:8080
+      user: admin
+
+    # Delete a Jenkins job using the token
+    - jenkins_job:
+      # Multi-line string in yaml is indicated by '|' Below is equivalent to "My first line \n My second line \n My third line"
+      name: |
+        My first line
+        My second line
+        My third line
+      # Using multiple lines in yaml but also make it consider as a single line is utilized by typing '>' like below. This improve readability
+      token: >
+        asdfadfadfafadssdf
+        zcvzcvxzxczvzczzcz
+        qewqwrqwreqeqreqrr
+      state: absent
+      url: http://localhost:8080
+      user: admin

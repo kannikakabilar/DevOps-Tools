@@ -1,12 +1,12 @@
-# Deployed-Containers
+# Container-Deployments
 This repo is used to develop templates to containerize applications using Docker and the respective deployment process using Kubernetes
 <br /><br />
-# Docker
+## Docker
 Download Docker App (w/ UI or through terminal) from here: https://docs.docker.com/desktop/install/mac-install/
 Check to see if you have docker installed: 
 > docker version
 Have Docker App open and running
-## Containerized NodeJS App
+### Containerized NodeJS App
 This folder contains a simple NodeJS app and a Dockerfile that will execute the app in a container which would then be accessible local browsers.
 - Command structure: docker build -t [myImageName]:[tag] [locationOfDockerfile]
 ```md 
@@ -32,7 +32,7 @@ docker log [containerID]
 ```
 > app listening on port 3000
 
-## Containerized Java App
+### Containerized Java App
 This folder contains a simple Java app and a Dockerfile that will execute the Java code in a container
 ```md
 cd ContainerizedJavaApp
@@ -43,7 +43,7 @@ docker build -t java-app .
 ```md
 docker run java-app
 ```
-# Kubernetes
+## Kubernetes
 This folder contains yaml files to deploy a web-app pod which will connect to the mongoDB pod through internal service using (external) configuration data from config map and secret (to securely send DB url and credentials). It will also make the web-app accessible externally from the browser using external service. 
 Docker App must be open and running.
 - Install Minikube
@@ -108,3 +108,18 @@ minikube ip
 ```
 Now go to browser and type: [ip_addr_found_above]:30100
 #### !Note: Database is also connected and works
+
+# GitHub-Actions
+This folder is used to learn and design various GitHub Action workflows using a sample Gradle-Java app. Go to .github/workflows to view all the workflows.
+
+##### build the project
+
+    ./gradlew build
+
+##### build Docker image called java-app. Execute from root
+
+    docker build -t java-app .
+    
+##### push image to repo 
+
+    docker tag java-app demo-app:java-1.0
